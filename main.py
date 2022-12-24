@@ -59,10 +59,19 @@ def detect_trend_change(ohlc_array, num_prev_candles=2):
   # Get the time zone for AEST
   timezone = pytz.timezone("Australia/Sydney")
 
-  # Iterate over the candles in the OHLC array
-  for i in range(1, len(ohlc_array)):
-    # Check if the current candle's close price is higher than the average of the previous num_prev_candles candles' close prices
+  for i in range(-1, -5, -1):
+    timestamp = ohlc_array[i][0]
+
+    time = datetime.fromtimestamp(timestamp / 1000, tz=timezone)
+    print(
+      f"{time} --- {i } -- {ohlc_array[i][1]}--{ohlc_array[i][2]}--{ohlc_array[i][3]}--{ohlc_array[i][4]}"
+    )
    
+
+  # Iterate over the candles in the OHLC array
+  for i in range(1, len(ohlc_array) - 1):
+    # Check if the current candle's close price is higher than the average of the previous num_prev_candles candles' close prices
+
     if ohlc_array[i][4] > sum(
       [ohlc_array[i - j][4]
        for j in range(1, num_prev_candles + 1)]) / num_prev_candles:
@@ -74,7 +83,7 @@ def detect_trend_change(ohlc_array, num_prev_candles=2):
         time = datetime.fromtimestamp(timestamp / 1000, tz=timezone)
         print(f"Trend changed at {time} to an uptrend")
         trendPrint.append(f"Trend changed at {time} to an uptrend")
-        if i == len(ohlc_array) - 1:
+        if i == len(ohlc_array) - 2:
           trendPrint.append("IFTTT")
           send_ifttt_alert(f"Trend changed at {time} to an uptrend")
 
@@ -91,7 +100,7 @@ def detect_trend_change(ohlc_array, num_prev_candles=2):
         time = datetime.fromtimestamp(timestamp / 1000, tz=timezone)
         print(f"Trend changed at {time} to a downtrend")
         trendPrint.append(f"Trend changed at {time} to a downtrend")
-        if i == len(ohlc_array) - 1:
+        if i == len(ohlc_array) - 2:
           trendPrint.append("IFTTT")
           send_ifttt_alert(f"Trend changed at {time} to a downtrend")
 
